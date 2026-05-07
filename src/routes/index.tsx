@@ -46,10 +46,19 @@ function Index() {
           <legend>Output</legend>
           <textarea rows={4} cols={80} value={result} readOnly />
           <br />
-          <button type="button" onClick={copy} disabled={!result}>
+          <button
+            type="button"
+            onClick={copy}
+            disabled={!result}
+            style={{ background: "#0a0", color: "#fff", padding: "4px 12px", marginRight: 8 }}
+          >
             {copied ? "Copied" : "Copy"}
           </button>
-          <button type="button" onClick={() => setText("")}>
+          <button
+            type="button"
+            onClick={() => setText("")}
+            style={{ background: "#a00", color: "#fff", padding: "4px 12px" }}
+          >
             Clear
           </button>
         </fieldset>
