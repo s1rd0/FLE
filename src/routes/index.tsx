@@ -1,26 +1,59 @@
 import { createFileRoute } from "@tanstack/react-router";
+import { useMemo, useState } from "react";
 
 export const Route = createFileRoute("/")({
   component: Index,
 });
 
-// IMPORTANT: Replace this placeholder. For sites with multiple pages (About, Services, Contact, etc.),
-// create separate route files (about.tsx, services.tsx, contact.tsx) — don't put all pages in this file.
-function PlaceholderIndex() {
-  return (
-    <div
-      className="flex min-h-screen items-center justify-center"
-      style={{ backgroundColor: "#fcfbf8" }}
-    >
-      <img
-        data-lovable-blank-page-placeholder="REMOVE_THIS"
-        src="https://cdn.gpteng.co/blank-app-v1.svg"
-        alt="Your app will live here!"
-      />
-    </div>
-  );
+function extractInitials(text: string): string {
+  return text
+    .split(/\s+/)
+    .map((w) => w.replace(/[^\p{L}\p{N}]/gu, ""))
+    .filter(Boolean)
+    .map((w) => w[0])
+    .join("");
 }
 
 function Index() {
-  return <PlaceholderIndex />;
+  const [text, setText] = useState("");
+  const [copied, setCopied] = useState(false);
+  const result = useMemo(() => extractInitials(text), [text]);
+
+  const copy = async () => {
+    await navigator.clipboard.writeText(result);
+    setCopied(true);
+    setTimeout(() => setCopied(false), 1200);
+  };
+
+  return (
+    <main>
+      <h1>First Letter Extractor</h1>
+      <p>Paste text below. Punctuation is ignored.</p>
+
+      <form>
+        <fieldset>
+          <legend>Input</legend>
+          <textarea
+            rows={10}
+            cols={80}
+            value={text}
+            onChange={(e) => setText(e.target.value)}
+            placeholder="Paste text here..."
+          />
+        </fieldset>
+
+        <fieldset>
+          <legend>Output</legend>
+          <textarea rows={4} cols={80} value={result} readOnly />
+          <br />
+          <button type="button" onClick={copy} disabled={!result}>
+            {copied ? "Copied" : "Copy"}
+          </button>
+          <button type="button" onClick={() => setText("")}>
+            Clear
+          </button>
+        </fieldset>
+      </form>
+    </main>
+  );
 }
